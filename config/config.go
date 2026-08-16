@@ -53,11 +53,13 @@ func LoadConfig() {
 }
 
 type Server struct {
-	Name   string `env:"APP_NAME"`
-	Port   string `env:"APP_PORT"`
-	Secret string `env:"APP_SECRET"`
-	Host   string `env:"APP_HOST"`
-	Mode   string `env:"APP_ENV"`
+	Name              string `env:"APP_NAME"`
+	Port              string `env:"APP_PORT"`
+	Secret            string `env:"APP_SECRET"`
+	Host              string `env:"APP_HOST"`
+	Mode              string `env:"APP_ENV"`
+	SMSServiceBaseUrl string `env:"SMS_SERVICE_URL"`
+	SMSServiceApiKey  string `env:"SMS_SERVICE_API_KEY"`
 }
 
 type Mysql struct {

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/othie12/scanner-api/config"
@@ -14,9 +15,8 @@ import (
 
 func main() {
 	config.LoadConfig()
-	if err := database.MysqlConnect(); err != nil {
-		fmt.Printf("Failed to initialize database: %v", err)
-		return
+	if err := database.Connect(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	SeedUser()

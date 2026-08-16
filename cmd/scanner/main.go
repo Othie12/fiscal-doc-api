@@ -16,12 +16,8 @@ func main() {
 
 	config.LoadConfig()
 
-	if err := database.MysqlConnect(); err != nil {
-		log.Fatalf("Failed to initialize Mysql database: %v", err)
-	}
-
-	if err := database.OracleConnect(); err != nil {
-		log.Fatalf("Failed to initialize Oracle database: %v", err)
+	if err := database.Connect(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	mainRouter := gin.Default()

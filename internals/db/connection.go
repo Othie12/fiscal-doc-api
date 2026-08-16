@@ -12,10 +12,10 @@ import (
 	"gorm.io/gorm"
 )
 
-var MySQLDB *gorm.DB
-var OracleDB *gorm.DB
+// var MySQLDB *gorm.DB
+var DB *gorm.DB
 
-func MysqlConnect() error {
+func mysqlConnect() error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		config.MysqlConfig.Username, config.MysqlConfig.Password, config.MysqlConfig.Host,
 		config.MysqlConfig.Port, config.MysqlConfig.DBName)
@@ -25,17 +25,12 @@ func MysqlConnect() error {
 	if err != nil {
 		return err
 	}
-	MySQLDB = db
+	DB = db
 	return nil
 }
 
 // connect to oracle db
-func OracleConnect() error {
-	// Connect to mysql for now to handle testing
-	OracleDB = MySQLDB
-	return nil
-	///////////////////////////////////////////////////////////////////////////
-
+func oracleConnect() error {
 	// dsn := "oracle://sms_user:secret123@192.168.1.20:1521/ORCLPDB1"
 	dsn := fmt.Sprintf("oracle://%s:%s@%s:%s/%s",
 		config.OracleConfig.Username, config.OracleConfig.Password, config.OracleConfig.Host,
@@ -62,14 +57,25 @@ func OracleConnect() error {
 
 	log.Println("Connected to Oracle")
 
-	OracleDB = db
+	DB = db
 	return nil
 }
 
+func Connect() error {
+	dbToUse := "mysql" // oracle | mysql
+	if dbToUse == "oracle" {
+		return oracleConnect()
+	} else {
+		return mysqlConnect()
+	}
+}
+
 func Migrate() error {
-	err := MySQLDB.AutoMigrate(
+	err := DB.AutoMigrate(
 		&models.User{},
 		&models.ScanLog{},
+		&models.FailedScanLog{},
+		&models.Qrcode{},
 	)
 
 	return err

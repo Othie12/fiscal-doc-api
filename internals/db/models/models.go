@@ -21,28 +21,31 @@ func (u *User) RemoveSensitiveData() {
 	u.Password = ""
 }
 
-// CREATE TABLE `qrcodes` (
-//   `id` int(10) UNSIGNED NOT NULL,
-//   `code` varchar(255) NOT NULL,
-//   `manufacturer` varchar(255) NOT NULL,
-//   `customer` varchar(255) NOT NULL,
-//   `product` varchar(255) NOT NULL,
-//   `time` timestamp NOT NULL DEFAULT current_timestamp(),
-//   `fdn` varchar(30) DEFAULT NULL,
-//   `cust_tin` varchar(30) DEFAULT NULL,
-//   `mfr_tin` varchar(30) DEFAULT NULL
-// ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+func (User) TableName() string {
+	return "ST_USERS"
+}
 
 type Qrcode struct {
-	Id           uint      `json:"id" gorm:"primarykey"`
-	Code         string    `json:"code" gorm:"not null"`
-	Manufacturer string    `json:"manufacturer" gorm:"not null"`
-	Customer     string    `json:"customer" gorm:"not null"`
-	Product      string    `json:"product" gorm:"not null"`
-	Time         time.Time `json:"time" gorm:"not null"`
-	Fdn          *string   `json:"fdn"`
-	CustTin      *string   `json:"cust_tin"`
-	MfrTin       *string   `json:"mfr_tin"`
+	Id              uint      `json:"id" gorm:"primarykey"`
+	Code            string    `json:"code" gorm:"not null"`
+	Manufacturer    string    `json:"manufacturer" gorm:"not null"`
+	Customer        string    `json:"customer" gorm:"not null"`
+	Product         string    `json:"product" gorm:"not null"`
+	Time            time.Time `json:"time" gorm:"not null"`
+	Fdn             *string   `json:"fdn"`
+	CustTin         *string   `json:"cust_tin"`
+	MfrTin          *string   `json:"mfr_tin"`
+	VcVehicleNumber string    `json:"vc_vehicle_number"`
+	VcDriverName    string    `json:"vc_driver_name"`
+	VcPrdDet        string    `json:"vc_prd_det"`
+	VcCustMbl       string    `json:"vc_cust_mbl"`
+	VcInvoiceNo     string    `json:"vc_invoice_no"`
+	DtInvoiceDate   string    `json:"dt_invoice_date"`
+	VcScoulMbl      string    `json:"vc_scoul_mbl"`
+}
+
+func (Qrcode) TableName() string {
+	return "ST_QRCODES"
 }
 
 type ScanLog struct {
@@ -51,6 +54,23 @@ type ScanLog struct {
 	ScannedById uint   `json:"scanned_by_id"`
 
 	ScannedBy *User `json:"scanned_by" gorm:"foreignKey:ScannedById;references:ID;constraint:OnDelete:SET NULL;"`
+}
+
+func (ScanLog) TableName() string {
+	return "ST_SCAN_LOGS"
+}
+
+type FailedScanLog struct {
+	gorm.Model
+	Fdn         string `json:"fdn"`
+	ScannedById uint   `json:"scanned_by_id"`
+	Reason      string `json:"reason"`
+
+	ScannedBy *User `json:"scanned_by" gorm:"foreignKey:ScannedById;references:ID;constraint:OnDelete:SET NULL;"`
+}
+
+func (FailedScanLog) TableName() string {
+	return "ST_FAILED_SCAN_LOGS"
 }
 
 // ////////////////////////// Custom Date component ////////////////////////////

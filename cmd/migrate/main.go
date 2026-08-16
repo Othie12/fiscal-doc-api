@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/othie12/scanner-api/config"
 	database "github.com/othie12/scanner-api/internals/db"
@@ -9,8 +10,8 @@ import (
 
 func main() {
 	config.LoadConfig()
-	if err := database.MysqlConnect(); err != nil {
-		fmt.Printf("Failed to initialize database: %v", err)
+	if err := database.Connect(); err != nil {
+		log.Fatalf("Failed to initialize database: %v", err)
 	}
 
 	if err := database.Migrate(); err != nil {

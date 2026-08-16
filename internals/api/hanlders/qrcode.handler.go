@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -69,6 +71,23 @@ func (h *QrcodeHandler) Scan(c *gin.Context) {
 	}
 
 	c.JSON(status, utils.ResponseWrapper(true, "ok", item))
+
+	// send SMS
+	if item.VcCustMbl == "" {
+		return
+	}
+
+	go func(fdn string) {
+		defer recover()
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		// Sugar Sales Vehicle UBD 757Z, SIL02922,10-AUG-26, FDN- 126456836005#SCOUL SECURITY GATE
+		msg := fmt.Sprintf("%s, Vehicle: %s, %s, %s, FDN-%s#SCOUL SECURITY GATE",
+			item.Product, item.VcVehicleNumber, item.Code, item.Time, fdn)
+		if err = h.service.SendSMS(ctx, msg, []string{item.VcCustMbl, item.VcScoulMbl}...); err != nil {
+			log.Println(err.Error())
+		}
+	}(fdn)
 }
 
 func (h *QrcodeHandler) All(c *gin.Context) {

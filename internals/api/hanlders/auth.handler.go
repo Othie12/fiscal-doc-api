@@ -54,7 +54,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if result := database.MySQLDB.Where("username = ?", dto.Username).First(&user); result.Error != nil {
+	if result := database.DB.Where("username = ?", dto.Username).First(&user); result.Error != nil {
 		c.JSON(http.StatusNotFound, utils.ResponseWrapper(false, fmt.Sprintf("User with username: '%s' doesn't exist.", dto.Username), nil))
 		return
 	}
