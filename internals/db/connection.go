@@ -62,7 +62,7 @@ func oracleConnect() error {
 }
 
 func Connect() error {
-	dbToUse := "mysql" // oracle | mysql
+	dbToUse := "oracle" // oracle | mysql
 	if dbToUse == "oracle" {
 		return oracleConnect()
 	} else {
@@ -75,7 +75,7 @@ func Migrate() error {
 		&models.User{},
 		&models.ScanLog{},
 		&models.FailedScanLog{},
-		&models.Qrcode{},
+		// &models.Qrcode{},
 	)
 
 	return err
